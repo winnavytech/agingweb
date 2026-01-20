@@ -5,7 +5,9 @@
  * @returns {Promise<Array>} - A promise that resolves to an array of objects.
  */
 async function fetchSheetData(sheetId, gid) {
-    const url = `https://docs.google.com/spreadsheets/d/e/${sheetId}/pub?gid=${gid}&single=true&output=csv`;
+    // Changed to /export endpoint to support standard Sheet IDs (1JJ...)
+    // Make sure the sheet is shared as "Anyone with the link"
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
 
     try {
         const response = await fetch(url);
