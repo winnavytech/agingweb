@@ -35,12 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
 
     // Dynamic Data Loading (if config exists)
+    // Dynamic Data Loading (if config exists)
     if (typeof SHEET_ID !== 'undefined' && SHEET_ID !== 'YOUR_GOOGLE_SHEET_ID_HERE') {
         loadSettings();
 
         // Only load announcements on the announcements page
         if (window.location.pathname.includes('announcements.html')) {
             loadAnnouncements();
+        } else {
+            // Assume index page for other cases (or specifically check)
+            loadRecentUpdates();
         }
     }
 });
@@ -191,6 +195,61 @@ async function loadAnnouncements() {
                 <p>${item.Content}</p>
                 ${item.Link ? `<p style="margin-top: 0.5rem;"><a href="${item.Link}" target="_blank" style="color: var(--blue-accent); font-weight: 600;">รายละเอียดเพิ่มเติม</a></p>` : ''}
             </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+// Function to load recent updates for Index Page
+async function loadRecentUpdates() {
+    const container = document.getElementById('updates-container');
+    if (!container) return;
+
+    container.innerHTML = '<p style="text-align:center;">กำลังโหลดประกาศล่าสุด...</p>';
+
+    const announcements = await fetchSheetData(SHEET_ID, SHEET_GIDS.announcements);
+    container.innerHTML = '';
+
+    if (announcements.length === 0) {
+        container.innerHTML = '<p style="text-align:center;">ยังไม่มีประกาศในขณะนี้</p>';
+        return;
+    }
+
+    // Take top 3 items
+    const recentItems = announcements.slice(0, 3);
+
+    recentItems.forEach(item => {
+        const isImportant = item.Type && item.Type.toLowerCase() === 'important';
+        const link = item.Link ? item.Link : '#'; // Use item link or # if empty
+        const linkClass = item.Link ? '' : 'classroom-link'; // Trigger classroom link logic if no direct link
+
+        // Parse Date (Assuming format "20 ม.ค. 2569")
+        // We just split it for display: "20", "ม.ค."
+        const dateParts = item.Date ? item.Date.split(' ') : ['-', '-'];
+        const day = dateParts[0] || '-';
+        const month = dateParts[1] || '-';
+
+        const card = document.createElement('a');
+        card.href = link;
+        card.className = `feed-item ${linkClass}`;
+
+        // If it's an external link, open in new tab
+        if (item.Link) card.target = "_blank";
+
+        card.innerHTML = `
+            <div class="date-badge">
+                <span class="date-day">${day}</span>
+                <span class="date-month">${month}</span>
+            </div>
+            <div class="feed-content">
+                <h4>
+                    ${item.Title}
+                    ${isImportant ? '<span class="tag tag-important">สำคัญ</span>' : ''}
+                </h4>
+                <p>${item.Content}</p>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--sky-blue); font-size: 1.25rem;"></i>
         `;
 
         container.appendChild(card);
