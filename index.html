@@ -74,48 +74,12 @@
                 </div>
             </div>
 
-            <!-- Feed Items - สามารถใส่ลิงก์เฉพาะเจาะจงได้ใน href -->
-            <a href="https://classroom.google.com/c/YOUR_CLASS_ID/p/YOUR_POST_ID" class="feed-item classroom-link">
-                <div class="date-badge">
-                    <span class="date-day">20</span>
-                    <span class="date-month">ม.ค.</span>
+            <!-- Dynamic Feed Items -->
+            <div id="updates-container">
+                <div style="text-align: center; padding: 1rem;">
+                    <p>กำลังโหลดประกาศล่าสุด...</p>
                 </div>
-                <div class="feed-content">
-                    <h4>
-                        กำหนดการสอบกลางภาค
-                        <span class="tag tag-important">สำคัญ</span>
-                    </h4>
-                    <p>รายละเอียดขอบเขตเนื้อหาและตารางสอบกลางภาคเรียนที่ 2/2568</p>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="color: var(--sky-blue); font-size: 1.25rem;"></i>
-            </a>
-
-            <a href="#" class="feed-item classroom-link">
-                <div class="date-badge">
-                    <span class="date-day">18</span>
-                    <span class="date-month">ม.ค.</span>
-                </div>
-                <div class="feed-content">
-                    <h4>อัพโหลดเอกสารสัปดาห์ที่ 3</h4>
-                    <p>Slide บรรยายเรื่องการประเมินสุขภาพผู้สูงอายุ พร้อมดาวน์โหลด</p>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="color: var(--sky-blue); font-size: 1.25rem;"></i>
-            </a>
-
-            <a href="#" class="feed-item classroom-link">
-                <div class="date-badge">
-                    <span class="date-day">15</span>
-                    <span class="date-month">ม.ค.</span>
-                </div>
-                <div class="feed-content">
-                    <h4>
-                        Case Study Analysis Assignment
-                        <span class="tag tag-normal">การบ้าน</span>
-                    </h4>
-                    <p>งานมอบหมายใหม่: วิเคราะห์กรณีศึกษา กำหนดส่งวันที่ 5 ก.พ. 2569</p>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="color: var(--sky-blue); font-size: 1.25rem;"></i>
-            </a>
+            </div>
 
             <div style="text-align: center; margin-top: 2rem;">
                 <a href="#" class="btn-hero classroom-link" style="display: inline-flex;">
@@ -199,14 +163,14 @@
                 <div class="card">
                     <h3><i class="fa-solid fa-info-circle" style="color: var(--sky-blue);"></i> รายละเอียด</h3>
                     <p>
-                        <strong>รหัสวิชา:</strong> NUR XXX<br>
-                        <strong>หน่วยกิต:</strong> X (X-X-X)<br>
+                        <strong>รหัสวิชา:</strong> NCNS 226<br>
+                        <strong>หน่วยกิต:</strong> 3 (3-0-6)<br>
                         <strong>ภาคการศึกษา:</strong> 2/2568
                     </p>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fa-solid fa-user-tie" style="color: var(--sky-blue);"></i> อาจารย์ผู้สอน</h3>
+                    <h3><i class="fa-solid fa-user-tie" style="color: var(--sky-blue);"></i> อาจารย์ผู้รับผิดชอบ</h3>
                     <p>
                         <strong>ชื่อ:</strong> [ชื่ออาจารย์]<br>
                         <strong>อีเมล:</strong> contact@rtnnc.ac.th<br>
@@ -256,6 +220,8 @@
         </div>
     </footer>
 
+    <script src="js/sheet-config.js"></script>
+    <script src="js/sheet-db.js"></script>
     <script src="js/main.js"></script>
 </body>
 

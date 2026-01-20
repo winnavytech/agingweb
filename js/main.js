@@ -33,6 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Animate elements on scroll
     initScrollAnimations();
+
+    // Dynamic Data Loading (if config exists)
+    if (typeof SHEET_ID !== 'undefined' && SHEET_ID !== 'YOUR_GOOGLE_SHEET_ID_HERE') {
+        loadSettings();
+
+        // Only load announcements on the announcements page
+        if (window.location.pathname.includes('announcements.html')) {
+            loadAnnouncements();
+        }
+    }
 });
 
 // ========================================
@@ -115,8 +125,74 @@ function initScrollAnimations() {
 // ========================================
 // Console Welcome
 // ========================================
-console.log(
-    '%c⚓ Royal Thai Navy Nursing College %c\nElderly Nursing Course Hub Ready.',
-    'color: #38bdf8; font-size: 20px; font-weight: bold; background: #0f172a; padding: 10px; border-radius: 5px;',
-    'color: #fbbf24; font-size: 14px;'
-);
+
+// ========================================
+// Google Sheets Integration
+// ========================================
+
+async function loadSettings() {
+    // 1. Fetch Settings Tab
+    const settings = await fetchSheetData(SHEET_ID, SHEET_GIDS.settings);
+
+    // Find 'classroom_url'
+    const classroomSetting = settings.find(s => s.Key === 'classroom_url');
+    if (classroomSetting && classroomSetting.Value) {
+        // Update CONFIG object in memory so click handlers use it
+        CONFIG.classroomUrl = classroomSetting.Value;
+
+        // Also update any direct hrefs if they exist (optional, mostly handled by click listener)
+        const classroomLinks = document.querySelectorAll('#classroomLink');
+        classroomLinks.forEach(link => {
+            link.href = classroomSetting.Value;
+        });
+    }
+}
+
+async function loadAnnouncements() {
+    const container = document.getElementById('announcement-container');
+    if (!container) return;
+
+    container.innerHTML = '<p style="text-align:center;">กำลังโหลดประกาศ...</p>';
+
+    const announcements = await fetchSheetData(SHEET_ID, SHEET_GIDS.announcements);
+
+    container.innerHTML = ''; // Clear loading
+
+    if (announcements.length === 0) {
+        container.innerHTML = '<p style="text-align:center;">ยังไม่มีประกาศในขณะนี้</p>';
+        return;
+    }
+
+    announcements.forEach(item => {
+        // Create Card HTML
+        const isImportant = item.Type && item.Type.toLowerCase() === 'important';
+        const cardClass = isImportant ? 'announcement important' : 'announcement';
+
+        // Icon mapping
+        let icon = '📢'; // default
+        if (item.Icon) icon = item.Icon;
+        else if (item.Type === 'important') icon = '⭐';
+        else if (item.Type === 'docs') icon = '📚';
+        else if (item.Type === 'assignment') icon = '✍️';
+
+        const card = document.createElement('div');
+        card.className = cardClass;
+
+        card.innerHTML = `
+            <div class="announcement-header">
+                <div class="announcement-title">
+                    <span>${icon}</span>
+                    <span>${item.Title}</span>
+                    ${isImportant ? '<span class="announcement-badge">สำคัญ</span>' : ''}
+                </div>
+                <div class="announcement-date">${item.Date}</div>
+            </div>
+            <div class="announcement-content">
+                <p>${item.Content}</p>
+                ${item.Link ? `<p style="margin-top: 0.5rem;"><a href="${item.Link}" target="_blank" style="color: var(--blue-accent); font-weight: 600;">รายละเอียดเพิ่มเติม</a></p>` : ''}
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
